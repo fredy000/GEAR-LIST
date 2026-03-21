@@ -1108,10 +1108,10 @@ function renderKitUseItems(kit){
   }).filter(Boolean);
 
   document.getElementById("kitUseItems").innerHTML = items.map(ki=>`
-    <div class="kit-use-item">
-      <input type="checkbox" class="kit-use-check" id="kuc-${ki.itemId}" ${ki.available?"checked":""}>
-      <span class="kit-use-name">${ki.item.name} <span style="color:#555">×${ki.qty}</span></span>
-      <span class="${ki.available?"kit-avail-ok":"kit-avail-warn"}">${ki.available?`✓ ${ki.free} free`:`⚠ ${ki.free}/${ki.qty}`}</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1A1A1F;gap:10px;">
+      <input type="checkbox" id="kuc-${ki.itemId}" ${ki.available?"checked":""} style="width:20px;height:20px;flex-shrink:0;accent-color:#FF6B35;cursor:pointer;">
+      <span style="flex:1;font-size:13px;color:#F0EDE8;">${ki.item.name} <span style="color:#555">×${ki.qty}</span></span>
+      <span style="font-size:11px;color:${ki.available?"#00C9A7":"#ff4444"};flex-shrink:0;">${ki.available?"✓ "+ki.free+" free":"⚠ "+ki.free+"/"+ki.qty}</span>
     </div>`).join("");
 }
 
