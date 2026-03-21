@@ -1045,11 +1045,17 @@ function renderKitItemPicker(){
         ${group.items.map(item=>{
           const qty = kitPickQtys[item.id]||0;
           const checked = qty > 0;
+          const taken = takenCount(item);
+          const free = Math.max(0, item.stock - taken);
+          const noStock = free === 0;
           return `
-          <div id="kprow-${item.id}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1A1A1F;gap:8px;">
+          <div id="kprow-${item.id}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1A1A1F;gap:8px;opacity:${noStock&&!checked?0.4:1}">
             <div style="display:flex;align-items:center;gap:10px;flex:1;">
-              <input type="checkbox" id="kpcb-${item.id}" ${checked?"checked":""} onchange="kitPickToggle(${item.id},this.checked)" style="width:18px;height:18px;flex-shrink:0;accent-color:#00C9A7;cursor:pointer;">
-              <span style="font-size:13px;color:#F0EDE8;">${item.name}</span>
+              <input type="checkbox" id="kpcb-${item.id}" ${checked?"checked":""} ${noStock&&!checked?"disabled":""} onchange="kitPickToggle(${item.id},this.checked)" style="width:18px;height:18px;flex-shrink:0;accent-color:#00C9A7;cursor:${noStock&&!checked?"not-allowed":"pointer"};">
+              <div style="flex:1;">
+                <div style="font-size:13px;color:#F0EDE8;">${item.name}</div>
+                <div style="font-size:10px;color:${free>0?"#00C9A7":"#ff4444"};margin-top:2px;">${free} free · ${item.stock} total${taken>0?" · "+taken+" out":""}</div>
+              </div>
             </div>
             <div id="kpqty-${item.id}" style="display:${checked?"flex":"none"};align-items:center;gap:5px;flex-shrink:0;">
               <button class="sm-btn" style="width:26px;height:26px;font-size:14px" onclick="kitPickChangeQty(${item.id},-1)">−</button>
