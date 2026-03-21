@@ -165,6 +165,8 @@ body.light-mode .btn-cancel { color: #555; border-color: #C0BDB8; }
 .log-body { flex: 1; }
 .log-person { font-size: 12px; font-weight: 600; }
 .log-action { font-size: 11px; color: #888; margin-top: 1px; }
+.log-item-name { color: #F0EDE8; }
+.log-project { color: #555; }
 .log-qty-out { color: #FF6B35; }
 .log-qty-in { color: #00C9A7; }
 .log-qty-admin { color: #A78BFA; }
@@ -284,6 +286,47 @@ body.light-mode .btn-cancel { color: #555; border-color: #C0BDB8; }
   .log-action { font-size: 12px; }
   .log-time { font-size: 12px; min-width: 46px; }
 }
+
+body.light-mode .log-qty-out { color: #c94a00; }
+body.light-mode .log-qty-in { color: #007a5e; }
+body.light-mode .log-qty-admin { color: #6d44e0; }
+body.light-mode .log-body .log-action span[style*="color:#F0EDE8"] { color: #1A1A1F !important; }
+body.light-mode .log-body span[style*="color:#F0EDE8"] { color: #1A1A1F !important; }
+body.light-mode .person-item-row span[style*="color:#ccc"] { color: #333 !important; }
+body.light-mode .person-item-row span[style*="color:#FF6B35"] { color: #c94a00 !important; }
+body.light-mode span[style*="color:#60A5FA"] { color: #1a5fa8 !important; }
+body.light-mode span[style*="color:#ff0000"] { color: #cc0000 !important; }
+body.light-mode .project-input { color: #333; }
+body.light-mode .kit-name { color: #1A1A1F; }
+body.light-mode .kit-meta { color: #888; }
+body.light-mode button[disabled] { background: #E8E5E0 !important; color: #999 !important; border-color: #D0CCC8 !important; }
+body.light-mode .modal-title { color: #1A1A1F !important; }
+body.light-mode .person-name-big { color: #1A1A1F; }
+body.light-mode .taker-name { color: #333; }
+body.light-mode .taker-count { color: #1A1A1F; }
+body.light-mode .item-name { color: #1A1A1F !important; }
+body.light-mode .cat-tag { opacity: 0.85; }
+body.light-mode #search::placeholder { color: #aaa; }
+body.light-mode .subtitle { color: #888 !important; }
+body.light-mode #liveText { color: #888 !important; }
+body.light-mode .admin-badge { background: #fff0eb; color: #c94a00; border-color: #f5c4a8; }
+body.light-mode .btn-purple { background: #f0edff; color: #5a3fd4; border-color: #c4b8f5; }
+body.light-mode .btn-teal { background: #e6f9f5; color: #0a7a5e; border-color: #a0ddd0; }
+body.light-mode .person-badge { background: #fff0eb; color: #c94a00; border-color: #f5c4a8; }
+body.light-mode .kit-badge { background: #e6f9f5; color: #0a7a5e; border-color: #a0ddd0; }
+body.light-mode .return-btn { color: #555; border-color: #C0BDB8; }
+body.light-mode .return-btn:hover { border-color: #0a7a5e; color: #0a7a5e; }
+body.light-mode .del-btn { color: #ccc; }
+body.light-mode .del-btn:hover { color: #cc0000; }
+body.light-mode .drag-handle { color: #bbb; }
+body.light-mode .move-btn { background: #F0EDE8; border-color: #D0CCC8; color: #555; }
+body.light-mode .pin-digit { background: #F0EDE8; border-color: #D0CCC8; color: #1A1A1F; }
+body.light-mode #catsList .cat-name-label { color: #1A1A1F; border-bottom-color: #ccc; }
+body.light-mode .people-list .person-row { border-bottom-color: #E8E5E0; }
+body.light-mode .modal input::placeholder { color: #aaa; }
+body.light-mode .log-day-title { color: #888 !important; }
+body.light-mode .log-item-name { color: #1A1A1F !important; }
+body.light-mode .log-project { color: #888 !important; }
 </style>
 </head>
 <body>
@@ -1323,18 +1366,18 @@ function renderLog(){
           const isOut=e.action==="out";
           const isAdm=["renamed","stock_added","stock_removed","pin_changed","cat_changed","cat_renamed","item_added","person_renamed","kit_created","kit_edited"].includes(e.action);
           let txt;
-          if(e.action==="out") txt=`<span class="log-qty-out">took ${e.qty}×</span> <span style="color:#F0EDE8">${e.itemName}</span>${e.project?` <span style='color:#555'>· ${e.project}</span>`:""}`;
-          else if(e.action==="in") txt=`<span class="log-qty-in">returned ${e.qty}×</span> <span style="color:#F0EDE8">${e.itemName}</span>${e.project?` <span style='color:#555'>· ${e.project}</span>`:""}`;
-          else if(e.action==="renamed") txt=`<span class="log-qty-admin">renamed</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
-          else if(e.action==="stock_added") txt=`<span class="log-qty-admin">+${e.qty} stock</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
-          else if(e.action==="stock_removed") txt=`<span class="log-qty-admin">−${e.qty} stock</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
-          else if(e.action==="cat_changed") txt=`<span class="log-qty-admin">changed category of</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
-          else if(e.action==="cat_renamed") txt=`<span class="log-qty-admin">renamed category</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
-          else if(e.action==="item_added") txt=`<span class="log-qty-admin">added item</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
+          if(e.action==="out") txt=`<span class="log-qty-out">took ${e.qty}×</span> <span class="log-item-name">${e.itemName}</span>${e.project?` <span class="log-project">· ${e.project}</span>`:""}`;  
+          else if(e.action==="in") txt=`<span class="log-qty-in">returned ${e.qty}×</span> <span class="log-item-name">${e.itemName}</span>${e.project?` <span class="log-project">· ${e.project}</span>`:""}`;
+          else if(e.action==="renamed") txt=`<span class="log-qty-admin">renamed</span> <span class="log-item-name">${e.itemName}</span>`;
+          else if(e.action==="stock_added") txt=`<span class="log-qty-admin">+${e.qty} stock</span> <span class="log-item-name">${e.itemName}</span>`;
+          else if(e.action==="stock_removed") txt=`<span class="log-qty-admin">−${e.qty} stock</span> <span class="log-item-name">${e.itemName}</span>`;
+          else if(e.action==="cat_changed") txt=`<span class="log-qty-admin">changed category of</span> <span class="log-item-name">${e.itemName}</span>`;
+          else if(e.action==="cat_renamed") txt=`<span class="log-qty-admin">renamed category</span> <span class="log-item-name">${e.itemName}</span>`;
+          else if(e.action==="item_added") txt=`<span class="log-qty-admin">added item</span> <span class="log-item-name">${e.itemName}</span>`;
           else if(e.action==="pin_changed") txt=`<span class="log-qty-admin">changed PIN</span>`;
           else if(e.action==="return_date_set") txt=`<span class="log-qty-admin">set return date</span> <span style="color:#60A5FA">${e.project}</span>`;
-          else if(e.action==="project_set") txt=`<span style="color:#FFD700">set project</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
-          else if(e.action==="person_renamed") txt=`<span class="log-qty-admin">renamed person</span> <span style="color:#F0EDE8">${e.itemName}</span>`;
+          else if(e.action==="project_set") txt=`<span style="color:#FFD700">set project</span> <span class="log-item-name">${e.itemName}</span>`;
+          else if(e.action==="person_renamed") txt=`<span class="log-qty-admin">renamed person</span> <span class="log-item-name">${e.itemName}</span>`;
           else if(e.action==="kit_created") txt=`<span class="log-qty-admin">created kit</span> <span style="color:#00C9A7">${e.itemName}</span>`;
           else if(e.action==="kit_edited") txt=`<span class="log-qty-admin">edited kit</span> <span style="color:#00C9A7">${e.itemName}</span>`;
           else txt=e.action;
@@ -1498,6 +1541,13 @@ function applyThemeToElements(isLight){
     header.style.background = isLight ? '#FFFFFF' : '#131316';
     header.style.borderBottomColor = isLight ? '#E0DDD8' : '#222';
   }
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn){
+    btn.style.background = isLight ? '#FFFFFF' : '#1A1A1F';
+    btn.style.borderColor = isLight ? '#C0BDB8' : '#333';
+    btn.style.color = isLight ? '#555' : '#888';
+    btn.style.boxShadow = isLight ? '0 2px 12px rgba(0,0,0,0.15)' : '0 2px 12px rgba(0,0,0,0.4)';
+  }
 }
 
 // Restore saved theme on load
@@ -1512,9 +1562,9 @@ function applyThemeToElements(isLight){
   }
 })();
 </script>
-<div style="text-align:center;padding:14px 0 20px;display:flex;flex-direction:column;align-items:center;gap:10px;">
-  <button onclick="toggleLightMode()" id="themeToggleBtn" style="background:transparent;border:1px solid #333;color:#666;border-radius:20px;padding:6px 18px;font-size:11px;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:all 0.2s;">☀️ Light Mode</button>
+<div style="text-align:center;padding:14px 0 20px;">
   <div style="font-size:10px;color:#2A2A2A;letter-spacing:1px;user-select:none;">By Fredy Miskin</div>
 </div>
+<button onclick="toggleLightMode()" id="themeToggleBtn" style="position:fixed;bottom:90px;right:16px;background:#1A1A1F;border:1px solid #333;color:#888;border-radius:50px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:all 0.2s;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,0.4);">☀️</button>
 </body>
 </html>
