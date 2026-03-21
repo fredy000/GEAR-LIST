@@ -16,7 +16,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { background: #0D0D0F; color: #F0EDE8; font-family: 'DM Mono','Courier New',monospace; max-width: 600px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
 
-#header { background: #131316; padding: 16px 16px 12px; position: sticky; top: 0; z-index: 20; border-bottom: 1px solid #222; }
+#header { background: #131316; padding: 16px 16px 12px; position: relative; z-index: 10; border-bottom: 1px solid #222; }
 .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .logo { font-size: 20px; font-weight: 700; letter-spacing: 2px; color: #FF6B35; }
 .header-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
@@ -36,11 +36,11 @@ body { background: #0D0D0F; color: #F0EDE8; font-family: 'DM Mono','Courier New'
 #filterCat { flex: 1; background: #1A1A1F; border: 1px solid #2A2A30; border-radius: 9px; padding: 9px 10px; color: #aaa; font-size: 12px; font-family: inherit; outline: none; }
 #filterCat option { background: #1A1A1F; }
 
-#tabs { display: flex; background: #131316; border-bottom: 1px solid #222; padding: 0 12px; position: sticky; top: 135px; z-index: 15; overflow-x: auto; }
+#tabs { display: flex; background: #131316; border-bottom: 1px solid #222; padding: 0 12px; overflow-x: auto; }
 .tab { padding: 10px 14px; font-size: 11px; font-family: inherit; cursor: pointer; border: none; background: transparent; color: #555; letter-spacing: 1px; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
 .tab.active { color: #FF6B35; border-bottom-color: #FF6B35; }
 
-#list { padding: 10px 12px; }
+#list { padding: 10px 12px; position: relative; z-index: 1; }
 .empty { text-align: center; color: #444; padding: 40px; font-size: 14px; }
 
 /* ITEM CARD */
@@ -265,7 +265,7 @@ body { background: #0D0D0F; color: #F0EDE8; font-family: 'DM Mono','Courier New'
   </div>
 </div>
 
-<div id="tabs">
+<div id="tabs" style="position:sticky;top:0;z-index:19;background:#131316;border-bottom:1px solid #222;display:flex;overflow-x:auto;padding:0 12px">
   <button class="tab active" onclick="setTab('gear')" id="tab-gear">GEAR</button>
   <button class="tab" onclick="setTab('kits')" id="tab-kits">🧳 KITS</button>
   <button class="tab" onclick="setTab('people')" id="tab-people">BY PERSON</button>
