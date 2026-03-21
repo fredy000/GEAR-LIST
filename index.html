@@ -1004,14 +1004,14 @@ function renderKitItemPicker(){
           const qty = kitPickQtys[item.id]||0;
           const checked = qty > 0;
           return `
-          <div class="kit-pick-item" id="kprow-${item.id}">
-            <div class="kit-pick-left">
-              <input type="checkbox" class="kit-pick-cb" id="kpcb-${item.id}" ${checked?"checked":""} onchange="kitPickToggle(${item.id},this.checked)">
-              <span class="kit-pick-name">${item.name}</span>
+          <div id="kprow-${item.id}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1A1A1F;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <input type="checkbox" id="kpcb-${item.id}" ${checked?"checked":""} onchange="kitPickToggle(${item.id},this.checked)" style="width:18px;height:18px;flex-shrink:0;accent-color:#00C9A7;cursor:pointer;">
+              <span style="font-size:13px;color:#F0EDE8;">${item.name}</span>
             </div>
-            <div class="kit-pick-qty" id="kpqty-${item.id}" style="display:${checked?"flex":"none"}">
+            <div id="kpqty-${item.id}" style="display:${checked?"flex":"none"};align-items:center;gap:5px;flex-shrink:0;">
               <button class="sm-btn" style="width:26px;height:26px;font-size:14px" onclick="kitPickChangeQty(${item.id},-1)">−</button>
-              <span class="kit-pick-num" id="kpnum-${item.id}">${qty||1}</span>
+              <span id="kpnum-${item.id}" style="font-size:14px;font-weight:700;min-width:20px;text-align:center;color:#F0EDE8;">${qty||1}</span>
               <button class="sm-btn" style="width:26px;height:26px;font-size:14px" onclick="kitPickChangeQty(${item.id},1)">+</button>
             </div>
           </div>`;
