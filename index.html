@@ -14,7 +14,58 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { background: #0D0D0F; color: #F0EDE8; font-family: 'DM Mono','Courier New',monospace; max-width: 600px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
+body { background: #0D0D0F; color: #F0EDE8; font-family: 'DM Mono','Courier New',monospace; max-width: 600px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; transition: background 0.3s, color 0.3s; }
+
+body.light-mode { background: #F5F4F0; color: #1A1A1F; }
+body.light-mode #header { background: #FFFFFF; border-bottom-color: #E0DDD8; }
+body.light-mode #tabs { background: #FFFFFF !important; border-bottom-color: #E0DDD8; }
+body.light-mode .tab { color: #999; }
+body.light-mode .tab.active { color: #FF6B35; border-bottom-color: #FF6B35; }
+body.light-mode .item-card { background: #FFFFFF; border-color: #E0DDD8; }
+body.light-mode .item-card:hover { border-color: #C0BDB8; }
+body.light-mode .pill { background: #F0EDE8; border-color: #E0DDD8; }
+body.light-mode .pill.p-stock .pval { color: #888; }
+body.light-mode .sm-btn { background: #F0EDE8; border-color: #D0CCC8; color: #1A1A1F; }
+body.light-mode .takers-section { border-top-color: #E8E5E0; }
+body.light-mode .takers-title { color: #999; }
+body.light-mode .taker-name { color: #444; }
+body.light-mode .assign-select { background: #F5F4F0; border-color: #D0CCC8; color: #444; }
+body.light-mode .person-card { background: #FFFFFF; border-color: #E0DDD8; }
+body.light-mode .kit-card { background: #FFFFFF; border-color: #E0DDD8; }
+body.light-mode .kit-item-name { color: #444; }
+body.light-mode .log-day-title { border-bottom-color: #E8E5E0; color: #999; }
+body.light-mode .log-entry { border-bottom-color: #F0EDE8; }
+body.light-mode .log-time { color: #999; }
+body.light-mode .log-person { color: #1A1A1F; }
+body.light-mode .log-action { color: #666; }
+body.light-mode .modal { background: #FFFFFF; }
+body.light-mode .modal input, body.light-mode .modal select { background: #F5F4F0; border-color: #D0CCC8; color: #1A1A1F; }
+body.light-mode .btn-ghost { color: #555; border-color: #C0BDB8; }
+body.light-mode .btn-ghost:hover { border-color: #888; color: #1A1A1F; }
+body.light-mode .overlay { background: rgba(0,0,0,0.5); }
+body.light-mode #footer { background: #FFFFFF; border-top-color: #E0DDD8; }
+body.light-mode .reset-btn { color: #555; border-color: #C0BDB8; }
+body.light-mode #search { background: #F0EDE8; border-color: #D0CCC8; color: #1A1A1F; }
+body.light-mode #filterCat { background: #F0EDE8; border-color: #D0CCC8; color: #555; }
+body.light-mode .subtitle { color: #999; }
+body.light-mode .progress-bg { background: #E0DDD8; }
+body.light-mode .person-items { border-top-color: #E8E5E0; }
+body.light-mode .person-item-row { border-bottom-color: #E8E5E0; }
+body.light-mode .project-input { background: #F0EDE8; border-color: #D0CCC8; color: #555; }
+body.light-mode .project-label { color: #999; }
+body.light-mode .cat-dropdown { background: #FFFFFF; border-color: #E0DDD8; }
+body.light-mode .cat-dropdown-item:hover { background: #F5F4F0; }
+body.light-mode .inline-edit { background: #F5F4F0; color: #1A1A1F; }
+body.light-mode .item-name { color: #1A1A1F; }
+body.light-mode .drag-handle { color: #ccc; }
+body.light-mode .del-btn { color: #ccc; }
+body.light-mode .kit-items-list { border-top-color: #E8E5E0; }
+body.light-mode .kit-actions { background: transparent; }
+body.light-mode .pin-digit { background: #F0EDE8; border-color: #D0CCC8; color: #1A1A1F; }
+body.light-mode .modal-title { color: #1A1A1F; }
+body.light-mode .modal-label { color: #888; }
+body.light-mode .modal-sub { color: #999; }
+body.light-mode .btn-cancel { color: #555; border-color: #C0BDB8; }
 
 #header { background: #131316; padding: 16px 16px 12px; position: relative; z-index: 10; border-bottom: 1px solid #222; }
 .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -265,7 +316,7 @@ body { background: #0D0D0F; color: #F0EDE8; font-family: 'DM Mono','Courier New'
   </div>
 </div>
 
-<div id="tabs" style="position:sticky;top:0;z-index:19;background:#131316;border-bottom:1px solid #222;display:flex;overflow-x:auto;padding:0 12px">
+<div id="tabs" id="tabsBar" style="position:sticky;top:0;z-index:19;background:#131316;border-bottom:1px solid #222;display:flex;overflow-x:auto;padding:0 12px">
   <button class="tab active" onclick="setTab('gear')" id="tab-gear">GEAR</button>
   <button class="tab" onclick="setTab('kits')" id="tab-kits">🧳 KITS</button>
   <button class="tab" onclick="setTab('people')" id="tab-people">BY PERSON</button>
@@ -1423,7 +1474,47 @@ function removePerson(name){
   state.items.forEach(i=>delete i.checkouts[name]);
   save(); renderPeopleList();
 }
+
+function toggleLightMode(){
+  const isLight = document.body.classList.toggle('light-mode');
+  localStorage.setItem('lightMode', isLight ? '1' : '0');
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn){
+    btn.textContent = isLight ? '🌙 Dark Mode' : '☀️ Light Mode';
+    btn.style.borderColor = isLight ? '#C0BDB8' : '#333';
+    btn.style.color = isLight ? '#888' : '#666';
+  }
+  applyThemeToElements(isLight);
+}
+
+function applyThemeToElements(isLight){
+  const tabs = document.getElementById('tabs');
+  if(tabs){
+    tabs.style.background = isLight ? '#FFFFFF' : '#131316';
+    tabs.style.borderBottomColor = isLight ? '#E0DDD8' : '#222';
+  }
+  const header = document.getElementById('header');
+  if(header){
+    header.style.background = isLight ? '#FFFFFF' : '#131316';
+    header.style.borderBottomColor = isLight ? '#E0DDD8' : '#222';
+  }
+}
+
+// Restore saved theme on load
+(function(){
+  if(localStorage.getItem('lightMode') === '1'){
+    document.body.classList.add('light-mode');
+    window.addEventListener('DOMContentLoaded', ()=>{
+      const btn = document.getElementById('themeToggleBtn');
+      if(btn){ btn.textContent = '🌙 Dark Mode'; btn.style.borderColor='#C0BDB8'; btn.style.color='#888'; }
+      applyThemeToElements(true);
+    });
+  }
+})();
 </script>
-<div style="text-align:center;padding:14px 0 6px;font-size:10px;color:#2A2A2A;letter-spacing:1px;user-select:none;pointer-events:none">By Fredy Miskin</div>
+<div style="text-align:center;padding:14px 0 20px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+  <button onclick="toggleLightMode()" id="themeToggleBtn" style="background:transparent;border:1px solid #333;color:#666;border-radius:20px;padding:6px 18px;font-size:11px;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:all 0.2s;">☀️ Light Mode</button>
+  <div style="font-size:10px;color:#2A2A2A;letter-spacing:1px;user-select:none;">By Fredy Miskin</div>
+</div>
 </body>
 </html>
