@@ -309,7 +309,12 @@ body.light-mode .person-name-big { color: #1A1A1F; }
 body.light-mode .taker-name { color: #333; }
 body.light-mode .taker-count { color: #1A1A1F; }
 body.light-mode .item-name { color: #1A1A1F !important; }
-body.light-mode .cat-tag { opacity: 1; filter: saturate(0.7) brightness(0.6); }
+body.light-mode .cat-tag { 
+  opacity: 1; 
+  background-color: rgba(0,0,0,0.08) !important;
+  color: #1A1A1F !important;
+  border-color: rgba(0,0,0,0.2) !important;
+}
 body.light-mode #search::placeholder { color: #aaa; }
 body.light-mode .subtitle { color: #888 !important; }
 body.light-mode #liveText { color: #888 !important; }
