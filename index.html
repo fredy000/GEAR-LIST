@@ -906,15 +906,38 @@ function renderKits(){
       </div>`).join("");
 
     const restricted = kit.allowedPeople && kit.allowedPeople.length > 0;
-    const statusBadge = (allAvailable
+
+    // Check how many "copies" of this kit are currently out
+    // A kit is "out" if ALL its items are taken by the same person (or at least one item from it is taken)
+    // Simpler: count distinct people who have taken items from this kit
+    const kitCopies = kit.copies || 1; // admin sets how many copies exist
+    const peopleWithKit = state.people.filter(person =>
+      (kit.items||[]).some(ki => (state.items.find(i=>i.id===ki.itemId)||{}).checkouts?.[person] > 0)
+    );
+    const copiesInUse = peopleWithKit.length;
+    const copiesAvailable = kitCopies - copiesInUse;
+    const kitTaken = copiesAvailable <= 0;
+
+    const statusBadge = (allAvailable && !kitTaken
       ? "<span class=\"kit-badge\">✓ Ready</span>"
-      : "<span style=\"font-size:10px;background:#ff444422;color:#ff4444;border:1px solid #ff444444;border-radius:20px;padding:2px 10px\">⚠ Partial</span>")
-      + (restricted ? " <span style=\"font-size:10px;background:#A78BFA22;color:#A78BFA;border:1px solid #A78BFA44;border-radius:20px;padding:2px 8px;margin-left:4px\">🔒 "+kit.allowedPeople.length+" people</span>" : "");
+      : kitTaken
+        ? "<span style=\"font-size:10px;background:#ff444422;color:#ff4444;border:1px solid #ff444444;border-radius:20px;padding:2px 10px\">🔴 In use</span>"
+        : "<span style=\"font-size:10px;background:#ff444422;color:#ff4444;border:1px solid #ff444444;border-radius:20px;padding:2px 10px\">⚠ Partial</span>")
+      + (restricted ? " <span style=\"font-size:10px;background:#A78BFA22;color:#A78BFA;border:1px solid #A78BFA44;border-radius:20px;padding:2px 8px;margin-left:4px\">🔒 "+kit.allowedPeople.length+" people</span>" : "")
+      + (kitCopies > 1 ? " <span style=\"font-size:10px;background:#60A5FA22;color:#60A5FA;border:1px solid #60A5FA44;border-radius:20px;padding:2px 8px;margin-left:4px\">"+copiesAvailable+"/"+kitCopies+" available</span>" : "");
+
+    const inUseBy = peopleWithKit.length > 0
+      ? `<div style="font-size:11px;color:#ff6666;padding:6px 16px 0;">⚠ In use by: ${peopleWithKit.join(", ")}</div>`
+      : "";
 
     const adminBtns = isAdmin
       ? `<button onclick="openKitEditModal(${kit.id})" style="flex:1;background:transparent;border:1px solid #333;color:#aaa;border-radius:8px;padding:8px;font-size:12px;cursor:pointer;font-family:inherit">✏️ Edit</button>
          <button onclick="deleteKit(${kit.id})" style="background:transparent;border:1px solid #333;color:#444;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;font-family:inherit" onmouseover="this.style.color='#ff4444'" onmouseout="this.style.color='#444'">✕</button>`
       : '';
+
+    const takeBtn = kitTaken
+      ? `<button disabled style="flex:2;background:#222;color:#555;border:1px solid #333;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:not-allowed;font-family:inherit;letter-spacing:0.5px">🔴 Kit In Use</button>`
+      : `<button onclick="openKitUseModal(${kit.id})" style="flex:2;background:#00C9A7;color:#0D0D0F;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.5px">▶ Take This Kit</button>`;
 
     return `
     <div class="kit-card">
@@ -923,11 +946,12 @@ function renderKits(){
           <div class="kit-name">🧳 ${kit.name}</div>
           <div class="kit-meta">${totalItems} units · ${kitItems.length} item types</div>
         </div>
-        ${statusBadge}
+        <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;align-items:center">${statusBadge}</div>
       </div>
       <div class="kit-items-list">${itemRows}</div>
-      <div class="kit-actions">
-        <button onclick="openKitUseModal(${kit.id})" style="flex:2;background:#00C9A7;color:#0D0D0F;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.5px">▶ Take This Kit</button>
+      ${inUseBy}
+      <div class="kit-actions" style="margin-top:8px">
+        ${takeBtn}
         ${adminBtns}
       </div>
     </div>`;
