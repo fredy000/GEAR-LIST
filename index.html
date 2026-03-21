@@ -298,6 +298,7 @@ body.light-mode span[style*="color:#60A5FA"] { color: #1a5fa8 !important; }
 body.light-mode span[style*="color:#ff0000"] { color: #cc0000 !important; }
 body.light-mode .project-input { color: #333; }
 body.light-mode .project-input[type="date"] { color-scheme: light; color: #333; }
+.project-input[type="date"] { color-scheme: dark; }
 body.light-mode .kit-name { color: #1A1A1F; }
 body.light-mode .kit-meta { color: #888; }
 body.light-mode button[disabled] { background: #E8E5E0 !important; color: #999 !important; border-color: #D0CCC8 !important; }
@@ -1345,7 +1346,7 @@ function renderPeople(){
             value="${state.returnDates&&state.returnDates[person]||''}"
             onchange="saveReturnDate('${person}',this.value)"
             onclick="event.stopPropagation()"
-            style="color-scheme:dark">
+            id="returnDate-${person.replace(/\s/g,'_')}">
         </div>
       </div>`;
   }).join("")||'<div class="empty">No people added yet.</div>';
@@ -1532,6 +1533,9 @@ function toggleLightMode(){
 }
 
 function applyThemeToElements(isLight){
+  document.querySelectorAll('input[type="date"]').forEach(el => {
+    el.style.colorScheme = isLight ? 'light' : 'dark';
+  });
   const tabs = document.getElementById('tabs');
   if(tabs){
     tabs.style.background = isLight ? '#FFFFFF' : '#131316';
