@@ -431,6 +431,16 @@ const DEFAULT = {
 };
 
 // Firebase
+let isAdmin = false;
+let newStock = 1;
+let currentTab = "gear";
+let selectedNewCatColor = PRESET_COLORS[0];
+let _srcId = null;
+
+// Kit editing state
+let editingKitId = null; // null = new, else kit id
+let kitPickQtys = {}; // itemId -> qty
+
 const firebaseConfig = {
   apiKey: "AIzaSyDjcIAweplh1eyI5h0Y1RrHlDeB1zHFE9Q",
   authDomain: "equipment-a5dde.firebaseapp.com",
@@ -452,8 +462,6 @@ try {
   if(cached){ const parsed = JSON.parse(cached); if(parsed.items && parsed.people) state = parsed; }
 } catch {}
 normalizeState();
-// Render immediately from cache while Firebase loads
-render();
 
 db.ref('.info/connected').on('value', snap => {
   const connected = snap.val();
@@ -500,16 +508,6 @@ function normalizeState(){
   if(!Array.isArray(state.log)) state.log = Object.values(state.log||{});
   state.items = state.items.map((i,idx) => ({ ...i, checkouts:i.checkouts||{}, order:i.order??idx }));
 }
-
-let isAdmin = false;
-let newStock = 1;
-let currentTab = "gear";
-let selectedNewCatColor = PRESET_COLORS[0];
-let _srcId = null;
-
-// Kit editing state
-let editingKitId = null; // null = new, else kit id
-let kitPickQtys = {}; // itemId -> qty
 
 function save(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
