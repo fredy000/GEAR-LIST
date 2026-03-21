@@ -369,6 +369,7 @@ body { background: #0D0D0F; color: #F0EDE8; font-family: 'DM Mono','Courier New'
     <div class="modal-sub">Select items and quantities for this kit</div>
     <div class="modal-label">KIT NAME</div>
     <input id="kitName" type="text" placeholder='e.g. "Wedding Set", "Interview Kit"'>
+
     <div class="modal-label" style="margin-top:4px">WHO CAN USE THIS KIT</div>
     <div style="font-size:10px;color:#555;margin-bottom:8px">Leave all unchecked = everyone can use it</div>
     <div id="kitAllowedPeople" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;padding:10px;background:#0D0D0F;border:1px solid #2A2A30;border-radius:9px;min-height:38px;"></div>
@@ -440,6 +441,7 @@ let _srcId = null;
 // Kit editing state
 let editingKitId = null; // null = new, else kit id
 let kitPickQtys = {}; // itemId -> qty
+let kitCopiesVal = 1;
 
 const firebaseConfig = {
   apiKey: "AIzaSyBJt_cE4qETg8v1SG9CjGaCmqbxsyviiis",
@@ -907,15 +909,22 @@ function renderKits(){
 
     const restricted = kit.allowedPeople && kit.allowedPeople.length > 0;
 
-    // Check how many "copies" of this kit are currently out
-    // A kit is "out" if ALL its items are taken by the same person (or at least one item from it is taken)
-    // Simpler: count distinct people who have taken items from this kit
-    const kitCopies = kit.copies || 1; // admin sets how many copies exist
+    // Calculate max copies based on actual stock availability
+    // For each item in the kit, how many full kit-quantities exist in stock?
+    const maxCopiesByStock = (kit.items||[]).reduce((min, ki) => {
+      const item = state.items.find(i=>i.id===ki.itemId);
+      if(!item) return 0;
+      const possible = Math.floor(item.stock / ki.qty);
+      return Math.min(min, possible);
+    }, 99);
+    const kitCopies = maxCopiesByStock; // auto-calculated from stock
+
+    // How many copies are currently in use?
     const peopleWithKit = state.people.filter(person =>
       (kit.items||[]).some(ki => (state.items.find(i=>i.id===ki.itemId)||{}).checkouts?.[person] > 0)
     );
     const copiesInUse = peopleWithKit.length;
-    const copiesAvailable = kitCopies - copiesInUse;
+    const copiesAvailable = Math.max(0, kitCopies - copiesInUse);
     const kitTaken = copiesAvailable <= 0;
 
     const statusBadge = (allAvailable && !kitTaken
@@ -924,7 +933,7 @@ function renderKits(){
         ? "<span style=\"font-size:10px;background:#ff444422;color:#ff4444;border:1px solid #ff444444;border-radius:20px;padding:2px 10px\">🔴 In use</span>"
         : "<span style=\"font-size:10px;background:#ff444422;color:#ff4444;border:1px solid #ff444444;border-radius:20px;padding:2px 10px\">⚠ Partial</span>")
       + (restricted ? " <span style=\"font-size:10px;background:#A78BFA22;color:#A78BFA;border:1px solid #A78BFA44;border-radius:20px;padding:2px 8px;margin-left:4px\">🔒 "+kit.allowedPeople.length+" people</span>" : "")
-      + (kitCopies > 1 ? " <span style=\"font-size:10px;background:#60A5FA22;color:#60A5FA;border:1px solid #60A5FA44;border-radius:20px;padding:2px 8px;margin-left:4px\">"+copiesAvailable+"/"+kitCopies+" available</span>" : "");
+      + (kitCopies > 1 ? " <span style=\"font-size:10px;background:#60A5FA22;color:#60A5FA;border:1px solid #60A5FA44;border-radius:20px;padding:2px 8px;margin-left:4px\">"+copiesAvailable+"/"+kitCopies+" kits</span>" : "") + (kitCopies === 0 ? " <span style=\"font-size:10px;background:#ff444422;color:#ff4444;border:1px solid #ff444444;border-radius:20px;padding:2px 8px;margin-left:4px\">0 in stock</span>" : "");
 
     const inUseBy = peopleWithKit.length > 0
       ? `<div style="font-size:11px;color:#ff6666;padding:6px 16px 0;">⚠ In use by: ${peopleWithKit.join(", ")}</div>`
@@ -970,6 +979,9 @@ function openKitEditModal(kitId){
   if(kit && kit.items){
     kit.items.forEach(ki=>{ kitPickQtys[ki.itemId]=ki.qty; });
   }
+  kitCopiesVal = (kit && kit.copies) ? kit.copies : 1;
+  const copiesEl = document.getElementById("kitCopiesDisplay");
+  if(copiesEl) copiesEl.textContent = kitCopiesVal;
 
   // Render allowed people checkboxes
   const allowedList = (kit && kit.allowedPeople) ? kit.allowedPeople : [];
@@ -986,6 +998,12 @@ function openKitEditModal(kitId){
   renderKitItemPicker();
   document.getElementById("overlayKitEdit").classList.add("show");
   setTimeout(()=>document.getElementById("kitName").focus(),100);
+}
+
+function changeKitCopies(delta){
+  kitCopiesVal = Math.max(1, kitCopiesVal + delta);
+  const el = document.getElementById("kitCopiesDisplay");
+  if(el) el.textContent = kitCopiesVal;
 }
 
 function updateKapLabel(cb){
@@ -1085,9 +1103,9 @@ function saveKit(){
 
   if(editingKitId !== null){
     const kit = state.kits.find(k=>k.id===editingKitId);
-    if(kit){ kit.name=name; kit.items=items; kit.allowedPeople=allowedPeople; kit.updatedAt=Date.now(); }
+    if(kit){ kit.name=name; kit.items=items; kit.allowedPeople=allowedPeople; kit.copies=kitCopiesVal; kit.updatedAt=Date.now(); }
   } else {
-    state.kits.push({ id: state.kitNextId++, name, items, allowedPeople, createdAt:Date.now() });
+    state.kits.push({ id: state.kitNextId++, name, items, allowedPeople, copies:kitCopiesVal, createdAt:Date.now() });
   }
 
   addLog("Admin","—",name, editingKitId!==null?"kit_edited":"kit_created",0);
