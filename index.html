@@ -507,7 +507,7 @@ if('ontouchstart' in window || navigator.maxTouchPoints > 0){
 }
 
 const STORAGE_KEY = "warehouse_v4";
-const DEFAULT_PIN = "8457";
+const DEFAULT_PIN = "8558";
 const PRESET_COLORS = ["#FF6B35","#FFD700","#00C9A7","#A78BFA","#F472B6","#94A3B8","#60A5FA","#34D399","#FB923C","#F87171"];
 const CAT_COLORS_DEFAULT = { Camera:"#FF6B35", Lighting:"#FFD700", Audio:"#00C9A7", Grip:"#A78BFA", Power:"#F472B6", Other:"#94A3B8" };
 
@@ -589,7 +589,7 @@ function normalizeState(){
   if(!state.people) state.people = DEFAULT.people;
   if(!state.log) state.log = [];
   if(!state.logId) state.logId = (state.log.length||0)+1;
-  if(!state.pin || state.pin==="1234") state.pin = DEFAULT_PIN;
+  if(!state.pin || state.pin==="1234" || state.pin==="8457") state.pin = DEFAULT_PIN;
   if(!state.catColors) state.catColors = {...CAT_COLORS_DEFAULT};
   if(!state.categories) state.categories = DEFAULT.categories;
   if(!state.projects) state.projects = {};
