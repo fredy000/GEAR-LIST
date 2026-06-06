@@ -333,6 +333,21 @@ body.light-mode .log-day-title { color: #888 !important; }
 body.light-mode .log-item-name { color: #1A1A1F !important; }
 body.light-mode .log-project { color: #888 !important; }
 body.light-mode .cat-tag { font-weight: 800 !important; }
+
+body.light-mode #kitAllowedPeople { background: #F0EDE8 !important; border-color: #D0CCC8 !important; }
+body.light-mode #kitAllowedPeople label { background: #FFFFFF !important; border-color: #D0CCC8 !important; color: #1A1A1F !important; }
+body.light-mode #kitAllowedPeople label input { accent-color: #00C9A7; }
+body.light-mode #kitItemPicker { color: #1A1A1F; }
+body.light-mode #kitItemPicker div[style*="color:#F0EDE8"] { color: #1A1A1F !important; }
+body.light-mode #kitItemPicker div { color: #1A1A1F; }
+body.light-mode .overlayKitEdit .modal { background: #FFFFFF; }
+body.light-mode #overlayKitEdit .modal { background: #FFFFFF; }
+
+
+body { --item-text: #F0EDE8; }
+body.light-mode { --item-text: #1A1A1F; }
+body.light-mode .kit-picker-item-name { color: #1A1A1F !important; }
+
 </style>
 </head>
 <body>
@@ -1154,7 +1169,7 @@ function renderKitItemPicker(){
             <div style="display:flex;align-items:center;gap:10px;flex:1;">
               <input type="checkbox" id="kpcb-${item.id}" ${checked?"checked":""} ${noStock&&!checked?"disabled":""} onchange="kitPickToggle(${item.id},this.checked)" style="width:18px;height:18px;flex-shrink:0;accent-color:#00C9A7;cursor:${noStock&&!checked?"not-allowed":"pointer"};">
               <div style="flex:1;">
-                <div style="font-size:13px;color:#F0EDE8;">${item.name}</div>
+                <div style="font-size:13px;color:var(--item-text, #F0EDE8);" class="kit-picker-item-name">${item.name}</div>
                 <div style="font-size:10px;color:${free>0?"#00C9A7":"#ff4444"};margin-top:2px;">${free} free · ${item.stock} total${taken>0?" · "+taken+" out":""}</div>
               </div>
             </div>
